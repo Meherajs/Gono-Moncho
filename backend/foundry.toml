@@ -1,0 +1,17 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+solc_version = "0.8.24"
+
+remappings = [
+     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+     "@chainlink/contracts/=lib/chainlink/contracts/",
+     "@solmate/=lib/solmate/src/",
+]
+
+[rpc_endpoints]
+polygon_zkevm = "https://rpc.polygon-zkevm.gateway.fm"
+
+[etherscan]
+polygon_zkevm = { key = "${POLYGONSCAN_API_KEY}", url = "https://api-zkevm.polygonscan.com/api" }

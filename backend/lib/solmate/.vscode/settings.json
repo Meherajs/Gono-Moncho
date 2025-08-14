@@ -1,0 +1,10 @@
+{
+    "solidity.packageDefaultDependenciesDirectory": "lib",
+    "solidity.packageDefaultDependenciesContractsDirectory": "src",
+    "solidity.compileUsingRemoteVersion": "v0.8.24",
+    "solidity.remappings": [
+        "@openzeppelin/=lib/openzeppelin-contracts/",
+        "@chainlink/=lib/chainlink/contracts/",
+        "@solmate/=lib/solmate/src/"
+    ]
+}
