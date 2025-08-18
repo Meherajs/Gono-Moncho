@@ -37,14 +37,6 @@ Value-Capture Tokenomics: Sustainable economic model without inflation
 
 Hybrid Governance: Reputation-weighted + Quadratic Voting + Liquid Democracy
 
-Technical Highlights
-Zero-Knowledge Proofs: e(E,g) = e(ωᵢ,g^{μ/g*ᵢ}) · e(g,g^{Fᵢ})
-
-Multi-Chain Architecture: Ethereum L1 + Polygon zkEVM L2
-
-Permanent Storage: Arweave's "pay once, store forever" model
-
-Decentralized Oracles: Chainlink AI for initial analysis
 
 Technology Stack
 Blockchain Infrastructure
