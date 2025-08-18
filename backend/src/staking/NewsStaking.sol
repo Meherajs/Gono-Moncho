@@ -17,6 +17,10 @@ contract NewsStaking is Ownable {
 
     mapping(address => Stake) public stakes;
 
+    // Array to keep track of all stakers
+    address[] private stakerAddresses;
+    mapping(address => bool) private isStaker;
+
     event Staked(address indexed user, uint256 amount);
     event Slashed(address indexed user, uint256 amount);
 
@@ -40,6 +44,7 @@ contract NewsStaking is Ownable {
             amount: stakes[msg.sender].amount + amount,
             stakedAt: block.timestamp
         });
+        addStaker(msg.sender);
         emit Staked(msg.sender, amount);
     }
 
@@ -48,11 +53,22 @@ contract NewsStaking is Ownable {
         require(stakes[user].amount >= amount, "Insufficient stake");
 
         stakes[user].amount -= amount;
-        newsToken.burn(amount);
+        newsToken.transfer(governance, amount); // Transfer slashed tokens to governance
         emit Slashed(user, amount);
     }
 
-    function calculateVoteCost(uint256 votes) public pure returns (uint256) {
-        return votes * votes;
+    function addStaker(address _staker) internal {
+        if (!isStaker[_staker]) {
+            stakerAddresses.push(_staker);
+            isStaker[_staker] = true;
+        }
+    }
+
+    function getAllStakers() external view returns (address[] memory) {
+        return stakerAddresses;
+    }
+
+    function calculateVoteCost(uint256 votes) external pure returns (uint256) {
+        return votes * votes; // Quadratic cost
     }
 }

@@ -1,0 +1,90 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "forge-std/Test.sol";
+import "../src/tokens/CRED.sol";
+import "../src/verification/Verification.sol";
+import "../src/external/ArweaveStorage.sol";
+import "../src/verification/SANUB.sol";
+
+// Mock AI Oracle
+contract MockAIOracle {
+    mapping(string => uint256) public scores;
+
+    function setScore(string memory contentHash, uint256 score) public {
+        scores[contentHash] = score;
+    }
+
+    function getAnalysis(
+        string memory contentHash
+    ) public view returns (uint256) {
+        return scores[contentHash];
+    }
+}
+
+contract VerificationTest is Test {
+    CRED public cred;
+    ArweaveStorage public arweave;
+    MockAIOracle public aiOracle;
+    Verification public verification;
+
+    address owner = address(1);
+    address reporter = address(2);
+    string constant CONTENT_HASH = "QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco";
+
+    function setUp() public {
+        cred = new CRED(owner);
+        arweave = new ArweaveStorage();
+        aiOracle = new MockAIOracle();
+        verification = new Verification(
+            address(cred),
+            address(aiOracle),
+            address(arweave)
+        );
+
+        // Setup mock AI score
+        aiOracle.setScore(CONTENT_HASH, 85); // 85% credibility score
+    }
+
+    function testNewsPublication() public {
+        vm.prank(reporter);
+        verification.publishNews(CONTENT_HASH);
+
+        (address reporterAddress, string memory hash, , , Verification.VerificationStatus status, ) = verification.newsItems(CONTENT_HASH);
+        assertEq(reporterAddress, reporter);
+    }
+
+    function testVerificationProcess() public {
+        // Publish news
+        vm.prank(reporter);
+        verification.publishNews(CONTENT_HASH);
+
+        // Add a verifier score first
+        uint256[] memory scores = new uint256[](1);
+        scores[0] = 85; // 85% credibility score
+        vm.prank(owner);
+        verification.addVerifierScore(CONTENT_HASH, 85);
+
+        // Finalize verification
+        verification.finalizeVerification(CONTENT_HASH);
+
+        // Check status
+        (, , , , Verification.VerificationStatus status, uint256 credibility) = verification.newsItems(CONTENT_HASH);
+
+        assertEq(uint(status), 2); // HUMAN_VERIFIED
+        assertGt(credibility, 0);
+    }
+
+    function testSANUBCalculations() public {
+        uint256[] memory scores = new uint256[](3);
+        scores[0] = 80;
+        scores[1] = 90;
+        scores[2] = 85;
+
+        uint256 belief = SANUB.calculateBelief(scores);
+        assertEq(belief, 85); // (80+90+85)/3 = 85
+
+        uint256 importance = SANUB.calculateImportance(3, 100);
+        assertEq(importance, 0.03 * 1e18); // 3% of total users
+    }
+}

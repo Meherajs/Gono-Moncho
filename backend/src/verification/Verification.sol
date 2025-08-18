@@ -60,6 +60,15 @@ contract Verification {
         aiOracle.requestAnalysis(contentHash);
     }
 
+    function addVerifierScore(
+        string memory contentHash,
+        uint256 score
+    ) external {
+        NewsItem storage item = newsItems[contentHash];
+        require(item.reporter != address(0), "News item does not exist");
+        item.verifierScores.push(score);
+    }
+
     function finalizeVerification(string memory contentHash) external {
         NewsItem storage item = newsItems[contentHash];
         require(item.status == VerificationStatus.PENDING, "Already verified");

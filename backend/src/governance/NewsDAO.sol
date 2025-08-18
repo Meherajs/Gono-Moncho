@@ -72,21 +72,37 @@ contract NewsDAO is Ownable {
         require(proposal.createdAt > 0, "Invalid proposal");
         require(!hasVoted[proposalId][msg.sender], "Already voted");
 
-        // Apply quadratic voting for funding proposals
+        uint256 totalVotes = votes;
+
+        // Apply quadratic voting for funding proposals first
         if (proposal.pType == ProposalType.FUNDING) {
             QuadraticVoting.validateVote(staking, msg.sender, votes);
             uint256 cost = QuadraticVoting.calculateCost(votes);
             staking.slash(msg.sender, cost);
         }
 
+        // Add the caller's votes
         if (support) {
             proposal.forVotes += votes;
         } else {
             proposal.againstVotes += votes;
         }
 
+        // Check for delegations and add delegated votes
+        address[] memory stakers = staking.getAllStakers();
+        for (uint i = 0; i < stakers.length; i++) {
+            if (delegation.getDelegate(stakers[i], 0) == msg.sender) {
+                if (support) {
+                    proposal.forVotes += votes;
+                } else {
+                    proposal.againstVotes += votes;
+                }
+                break; // Only allow one delegation for now
+            }
+        }
+
         hasVoted[proposalId][msg.sender] = true;
-        emit Voted(proposalId, msg.sender, support, votes);
+        emit Voted(proposalId, msg.sender, support, totalVotes);
     }
 
     function executeProposal(uint256 proposalId) external {
