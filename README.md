@@ -24,26 +24,3 @@ The platform implements:
 ✅ Multi-layered verification protocol
 
 🌐 Permanent, immutable storage via Arweave
-
-Key Features
-Core Innovations
-Anonymous Verification: Journalists can publish without revealing identity
-
-Sybil Resistance: Combines Proof-of-Humanity with economic staking
-
-SANUB Reputation Model: Algorithmic credibility scoring system
-
-Value-Capture Tokenomics: Sustainable economic model without inflation
-
-Hybrid Governance: Reputation-weighted + Quadratic Voting + Liquid Democracy
-
-
-Technology Stack
-Blockchain Infrastructure
-Component	Technology
-Settlement Layer	Ethereum Mainnet
-Execution Layer	Polygon zkEVM
-Storage Layer	Arweave
-Indexing	The Graph
-Identity	BrightID
-Oracles	Chainlink AI
