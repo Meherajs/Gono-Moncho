@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    platform: linux/amd64 # <-- ADD THIS LINE
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    environment:
+      - WATCHPACK_POLLING=true
