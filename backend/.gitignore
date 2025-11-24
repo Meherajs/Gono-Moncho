@@ -1,8 +1,11 @@
 # Foundry specific
-backend/cache/
-backend/out/
-backend/broadcast/
-backend/.env
+cache/
+out/
+broadcast/
+.env
+
+# Deployment files (sensitive)
+*.tmp
 
 # OS files
 .DS_Store
@@ -12,7 +15,3 @@ Thumbs.db
 .vscode/
 .idea/
 *.code-workspace
-
-# Dependencies
-backend/lib/
-node_modules/

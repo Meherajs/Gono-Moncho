@@ -1,66 +1,55 @@
-## Foundry
+# Gono-Moncho Smart Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Overview
 
-Foundry consists of:
+Smart contracts for the Gono-Moncho decentralized news verification platform built with Foundry.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Deployed Contracts (Polygon Amoy Testnet)
 
-## Documentation
+- **NEWS Token**: `0xd3091433da9a925c38682b28ffbae975ed06617a`
+- **CRED Token**: `0x95e29667e07767bd019b4a79f3979a416c30f573`
+- **NewsStaking**: `0x58321d7cb23248ca3f39f01e4480f4a8b166bfec`
+- **NewsDAO**: `0xccf0212b8c443ee148a36106f109b7b3c5250f51`
+- **Verification**: `0xe5672b7bf38e11d81feb07d77a35cf5499a0adeb`
+- **ArweaveStorage**: `0xc7311a7c71647edd9556938ad6f22afe4dc01a66`
+- **DelegationRegistry**: `0xea67b90c7d566ae98c4906fa8962844fb424e4f0`
 
-https://book.getfoundry.sh/
+## Development
 
-## Usage
+### Prerequisites
+
+- [Foundry](https://book.getfoundry.sh/getting-started/installation)
 
 ### Build
 
 ```shell
-$ forge build
+forge build
 ```
 
 ### Test
 
 ```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
+forge test
 ```
 
 ### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+forge script script/Deploy.s.sol --rpc-url polygon_amoy --broadcast --legacy
 ```
 
-### Cast
+### Format
 
 ```shell
-$ cast <subcommand>
+forge fmt
 ```
 
-### Help
+## Contract Architecture
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- **NEWS**: Governance token with voting capabilities
+- **CRED**: Reputation token earned through quality journalism
+- **NewsStaking**: Staking mechanism for NEWS tokens
+- **NewsDAO**: Decentralized governance for the platform
+- **Verification**: News verification and credibility scoring
+- **ArweaveStorage**: Integration with Arweave for permanent storage
+- **DelegationRegistry**: Vote delegation system

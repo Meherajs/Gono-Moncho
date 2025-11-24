@@ -4,6 +4,7 @@ out = 'out'
 libs = ['lib']
 solc_version = "0.8.24"
 
+local = "http://127.0.0.1:8545"
 remappings = [
      "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
      "@chainlink/contracts/=lib/chainlink/contracts/",
@@ -11,7 +12,7 @@ remappings = [
 ]
 
 [rpc_endpoints]
-polygon_zkevm = "https://rpc.polygon-zkevm.gateway.fm"
+polygon_amoy = "https://rpc-amoy.polygon.technology"
 
 [etherscan]
-polygon_zkevm = { key = "${POLYGONSCAN_API_KEY}", url = "https://api-zkevm.polygonscan.com/api" }
+polygon_amoy = { key = "${POLYGONSCAN_API_KEY}", url = "https://api-amoy.polygonscan.com/api" }

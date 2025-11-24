@@ -1,9 +1,7 @@
 "use client";
 
 import { useWriteContract } from 'wagmi';
-import { gonoMonchoABI } from '@/lib/abi';
-
-const contractAddress = '0x0000000000000000000000000000000000000000';
+import { VerificationABI, CONTRACT_ADDRESSES } from '@/lib/contracts';
 
 // The component now accepts the article's ID as a prop
 export default function VerificationSection({ articleId }: { articleId: number }) {
@@ -11,19 +9,19 @@ export default function VerificationSection({ articleId }: { articleId: number }
 
   const handleVerify = () => {
     writeContract({
-      address: contractAddress,
-      abi: gonoMonchoABI,
-      functionName: 'confirmAuthenticity',
-      args: [BigInt(articleId)], // We convert the ID to BigInt for the smart contract
+      address: CONTRACT_ADDRESSES.Verification,
+      abi: VerificationABI,
+      functionName: 'finalizeVerification',
+      args: [`article-${articleId}`]
     });
   };
 
   const handleFlag = () => {
     writeContract({
-      address: contractAddress,
-      abi: gonoMonchoABI,
-      functionName: 'flagAsMisinformation',
-      args: [BigInt(articleId)],
+      address: CONTRACT_ADDRESSES.Verification,
+      abi: VerificationABI,
+      functionName: 'addVerifierScore',
+      args: [`article-${articleId}`, BigInt(0)]
     });
   };
 

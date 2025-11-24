@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { gonoMonchoABI } from '@/lib/abi';
+import { VerificationABI, CONTRACT_ADDRESSES } from '@/lib/contracts';
 import { parseEther } from 'viem';
 import { useArticles } from '@/context/ArticleContext';
 import { useRouter } from 'next/navigation';
-
-const contractAddress = '0x0000000000000000000000000000000000000000';
 
 export default function PublishPage() {
   const [headline, setHeadline] = useState('');
@@ -59,12 +57,14 @@ export default function PublishPage() {
     }
     hasAddedArticle.current = false;
     
+    // Create content hash from headline and content
+    const contentHash = headline + '|' + content;
+    
     writeContract({
-      address: contractAddress,
-      abi: gonoMonchoABI,
-      functionName: 'publishArticle',
-      args: [headline, content],
-      value: parseEther('0.00001'),
+      address: CONTRACT_ADDRESSES.Verification,
+      abi: VerificationABI,
+      functionName: 'publishNews',
+      args: [contentHash],
     });
   };
 

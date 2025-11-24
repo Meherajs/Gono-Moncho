@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gono-Moncho Frontend
+
+Decentralized news verification platform built with Next.js 15, React 19, and Web3 technologies.
+
+## Features
+
+- 🔐 Web3 wallet integration (MetaMask, WalletConnect)
+- 📰 Decentralized news publishing and verification
+- 🗳️ DAO governance participation
+- 💰 Token staking and rewards
+- 🔍 News credibility scoring
+
+## Tech Stack
+
+- **Framework**: Next.js 15.4.5 (App Router)
+- **Web3**: Wagmi 2.16.1, Viem 2.33.2
+- **Styling**: Tailwind CSS
+- **Blockchain**: Polygon Amoy Testnet
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- MetaMask or compatible Web3 wallet
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
+
+## Deployed Contracts
+
+The frontend connects to smart contracts deployed on Polygon Amoy testnet. Contract addresses are configured in `src/lib/contracts.ts`.
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js app router pages
+├── components/       # React components
+├── context/          # React context providers
+├── lib/              # Contract ABIs and utilities
+└── Hooks/            # Custom React hooks
+```
+
+## Environment Setup
+
+1. Get testnet POL from [Polygon Faucet](https://faucet.polygon.technology/)
+2. Connect MetaMask to Polygon Amoy testnet
+3. Start publishing and verifying news!
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Wagmi Documentation](https://wagmi.sh)
+- [Polygon Documentation](https://docs.polygon.technology/)
