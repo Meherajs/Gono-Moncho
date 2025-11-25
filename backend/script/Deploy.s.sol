@@ -9,6 +9,7 @@ import "../src/staking/NewsStaking.sol";
 import "../src/governance/libraries/DelegationRegistry.sol";
 import "../src/governance/NewsDAO.sol";
 import "../src/verification/Verification.sol";
+import "../src/verification/ReporterRegistry.sol";
 import "../src/external/ArweaveStorage.sol";
 
 contract DeployScript is Script {
@@ -58,13 +59,22 @@ contract DeployScript is Script {
         ArweaveStorage arweave = new ArweaveStorage();
         console.log("ArweaveStorage deployed at:", address(arweave));
 
+        // Deploy Reporter Registry
+        console.log("Deploying ReporterRegistry...");
+        ReporterRegistry reporterRegistry = new ReporterRegistry(
+            address(news),
+            deployer
+        );
+        console.log("ReporterRegistry deployed at:", address(reporterRegistry));
+
         // Deploy verification (mock oracle for now)
         console.log("Deploying Verification...");
         address mockOracle = address(0); // Replace with actual oracle
         Verification verification = new Verification(
             address(cred),
             mockOracle,
-            address(arweave)
+            address(arweave),
+            address(reporterRegistry)
         );
         console.log("Verification deployed at:", address(verification));
 
@@ -86,6 +96,7 @@ contract DeployScript is Script {
         console.log("NewsStaking:", address(staking));
         console.log("NewsDAO:", address(dao));
         console.log("Verification:", address(verification));
+        console.log("ReporterRegistry:", address(reporterRegistry));
         console.log("ArweaveStorage:", address(arweave));
         console.log("DelegationRegistry:", address(delegation));
     }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import "../tokens/CRED.sol";
 import "./SANUB.sol";
+import "./ReporterRegistry.sol";
 import "../external/AIOracle.sol";
 import "../external/ArweaveStorage.sol";
 
@@ -10,6 +11,7 @@ contract Verification {
     CRED public credToken;
     AIOracle public aiOracle;
     ArweaveStorage public arweave;
+    ReporterRegistry public reporterRegistry;
 
     enum VerificationStatus {
         PENDING,
@@ -32,13 +34,25 @@ contract Verification {
     event NewsPublished(string indexed arweaveHash, address indexed reporter);
     event NewsVerified(string indexed arweaveHash, VerificationStatus status);
 
-    constructor(address _credToken, address _aiOracle, address _arweave) {
+    constructor(
+        address _credToken,
+        address _aiOracle,
+        address _arweave,
+        address _reporterRegistry
+    ) {
         credToken = CRED(_credToken);
         aiOracle = AIOracle(_aiOracle);
         arweave = ArweaveStorage(_arweave);
+        reporterRegistry = ReporterRegistry(_reporterRegistry);
     }
 
     function publishNews(string memory contentHash) external {
+        // Check if reporter is verified and can publish
+        require(
+            reporterRegistry.canPublish(msg.sender),
+            "Not authorized to publish. Please register and get verified as a reporter."
+        );
+
         // Store reference to Arweave content
         arweave.storeReference(contentHash, msg.sender);
 
@@ -52,6 +66,9 @@ contract Verification {
             credibilityScore: 0
         });
 
+        // Increment article count for reporter
+        reporterRegistry.incrementArticleCount(msg.sender);
+
         emit NewsPublished(contentHash, msg.sender);
     }
 
@@ -64,8 +81,16 @@ contract Verification {
         string memory contentHash,
         uint256 score
     ) external {
+        // Check if user is authorized to verify
+        require(
+            reporterRegistry.canVerify(msg.sender),
+            "Not authorized to verify. Please register as an analyzer or verifier."
+        );
+
         NewsItem storage item = newsItems[contentHash];
         require(item.reporter != address(0), "News item does not exist");
+        require(score <= 100, "Score must be between 0 and 100");
+
         item.verifierScores.push(score);
     }
 

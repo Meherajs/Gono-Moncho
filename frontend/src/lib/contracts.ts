@@ -9,6 +9,7 @@ export const CONTRACT_ADDRESSES = {
   Verification: '0xe5672b7bf38e11d81feb07d77a35cf5499a0adeb',
   ArweaveStorage: '0xc7311a7c71647edd9556938ad6f22afe4dc01a66',
   DelegationRegistry: '0xea67b90c7d566ae98c4906fa8962844fb424e4f0',
+  ReporterRegistry: '0x0000000000000000000000000000000000000000', // TODO: Update after deployment
   // Note: AIOracle address not provided - AI analysis will be accessed through Verification contract
   AIOracle: '0x0000000000000000000000000000000000000000' // Placeholder - update when deployed
 } as const;
@@ -285,6 +286,125 @@ export const DelegationRegistryABI = [
       { "name": "delegator", "type": "address", "indexed": true },
       { "name": "topic", "type": "uint256", "indexed": true },
       { "name": "delegate", "type": "address", "indexed": true }
+    ]
+  }
+] as const;
+
+// ReporterRegistry ABI
+export const ReporterRegistryABI = [
+  {
+    "type": "function",
+    "name": "registerReporter",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "_ipfsMetadata", "type": "string" },
+      { "name": "_role", "type": "uint8" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "stakeTokens",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "_amount", "type": "uint256" }],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "verifyReporter",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "_reporter", "type": "address" },
+      { "name": "_approve", "type": "bool" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "withdrawStake",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "_amount", "type": "uint256" }],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "canPublish",
+    "stateMutability": "view",
+    "inputs": [{ "name": "_user", "type": "address" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "canVerify",
+    "stateMutability": "view",
+    "inputs": [{ "name": "_user", "type": "address" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "function",
+    "name": "getReporterProfile",
+    "stateMutability": "view",
+    "inputs": [{ "name": "_reporter", "type": "address" }],
+    "outputs": [
+      { "name": "role", "type": "uint8" },
+      { "name": "status", "type": "uint8" },
+      { "name": "stakedAmount", "type": "uint256" },
+      { "name": "registeredAt", "type": "uint256" },
+      { "name": "verifiedAt", "type": "uint256" },
+      { "name": "ipfsMetadata", "type": "string" },
+      { "name": "verifiedBy", "type": "address" },
+      { "name": "publishedArticles", "type": "uint256" },
+      { "name": "isFreeTestAccount", "type": "bool" }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "reporters",
+    "stateMutability": "view",
+    "inputs": [{ "name": "", "type": "address" }],
+    "outputs": [
+      { "name": "role", "type": "uint8" },
+      { "name": "status", "type": "uint8" },
+      { "name": "stakedAmount", "type": "uint256" },
+      { "name": "registeredAt", "type": "uint256" },
+      { "name": "verifiedAt", "type": "uint256" },
+      { "name": "ipfsMetadata", "type": "string" },
+      { "name": "verifiedBy", "type": "address" },
+      { "name": "publishedArticles", "type": "uint256" },
+      { "name": "isFreeTestAccount", "type": "bool" }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "testingMode",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "type": "event",
+    "name": "ReporterRegistered",
+    "inputs": [
+      { "name": "reporter", "type": "address", "indexed": true },
+      { "name": "role", "type": "uint8", "indexed": false },
+      { "name": "ipfsMetadata", "type": "string", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ReporterVerified",
+    "inputs": [
+      { "name": "reporter", "type": "address", "indexed": true },
+      { "name": "verifier", "type": "address", "indexed": true },
+      { "name": "approved", "type": "bool", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "StakeDeposited",
+    "inputs": [
+      { "name": "reporter", "type": "address", "indexed": true },
+      { "name": "amount", "type": "uint256", "indexed": false }
     ]
   }
 ] as const;

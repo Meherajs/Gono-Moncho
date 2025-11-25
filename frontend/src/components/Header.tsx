@@ -44,6 +44,14 @@ export default function Header() {
             
             {/* Navigation Links with modern styling */}
             <Link 
+              href="/reporter" 
+              className="group relative font-semibold text-gray-700 hover:text-primary-600 transition-all duration-300 px-3 py-2"
+            >
+              <span className="relative z-10">🎤 Reporter Portal</span>
+              <span className="absolute inset-0 bg-primary-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+            </Link>
+            
+            <Link 
               href="/governance" 
               className="group relative font-semibold text-gray-700 hover:text-primary-600 transition-all duration-300 px-3 py-2"
             >
@@ -51,26 +59,13 @@ export default function Header() {
               <span className="absolute inset-0 bg-primary-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
             
-            {/* The Publish button - Only show if user has staked NEWS tokens */}
-            {isJournalist && !isLoading && (
-              <Link 
-                href="/publish" 
-                className="relative font-bold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 group overflow-hidden"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  ✍️ Publish Article
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-              </Link>
-            )}
-            
-            {/* Show stake message if connected but not journalist */}
+            {/* Show reporter portal message if connected but not verified */}
             {!isJournalist && !isLoading && (
               <Link 
-                href="/governance" 
+                href="/reporter" 
                 className="text-xs font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-3 py-2 rounded-lg transition-all duration-200 border border-primary-200"
               >
-                🔒 Stake NEWS to publish →
+                📝 Register as Reporter →
               </Link>
             )}
 
