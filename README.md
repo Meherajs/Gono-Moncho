@@ -82,6 +82,12 @@ Gono Moncho addresses critical challenges in modern journalism:
 
 ## Getting Started
 
+### 🚀 Live Demo
+
+**Try the platform now**: [https://gono-moncho.vercel.app](https://gono-moncho.vercel.app)
+
+> **Note**: Connect MetaMask to Polygon Amoy Testnet (Chain ID: 80002) to interact with the platform.
+
 ### Prerequisites
 
 Ensure you have the following installed:
