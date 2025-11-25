@@ -1,9 +1,31 @@
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
+import { CONTRACT_ADDRESSES, NewsStakingABI, CREDABI } from '@/lib/contracts';
 
 export function useUserRole() {
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
 
-  // If the user's wallet is not connected, they cannot have a role.
+  // Check if user has staked NEWS tokens (makes them a journalist)
+  const { data: stakeData, isLoading: isLoadingStake } = useReadContract({
+    address: CONTRACT_ADDRESSES.NewsStaking,
+    abi: NewsStakingABI,
+    functionName: 'stakes',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address && isConnected,
+    }
+  });
+
+  // Check if user has CRED tokens (makes them a verifier/analyzer)
+  const { data: credBalance, isLoading: isLoadingCred } = useReadContract({
+    address: CONTRACT_ADDRESSES.CRED,
+    abi: CREDABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address && isConnected,
+    }
+  });
+
   if (!isConnected) {
     return { 
       isJournalist: false, 
@@ -12,11 +34,19 @@ export function useUserRole() {
     };
   }
 
-  // If the wallet IS connected, we will return our mock roles for the prototype.
-  // This is now synchronous and will be instant.
+  const isLoading = isLoadingStake || isLoadingCred;
+  
+  // User is a journalist if they have staked NEWS tokens
+  const stakedAmount = stakeData ? (stakeData[0] as bigint) : BigInt(0);
+  const isJournalist = stakedAmount > BigInt(0);
+  
+  // User is an analyzer/verifier if they have CRED tokens
+  const credAmount = credBalance || BigInt(0);
+  const isAnalyzer = credAmount > BigInt(0);
+
   return { 
-    isJournalist: true, 
-    isAnalyzer: true, 
-    isLoading: false 
+    isJournalist, 
+    isAnalyzer, 
+    isLoading 
   };
 }

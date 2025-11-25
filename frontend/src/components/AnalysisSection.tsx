@@ -8,7 +8,7 @@ export default function AnalysisSection() {
   };
 
   return (
-    <div className="mt-8 pt-6 border-t">
+    <div className="p-8 lg:p-12">
       <h3 className="text-2xl font-bold mb-4">Submit Your Analysis</h3>
       <form onSubmit={handleSubmit}>
         <textarea

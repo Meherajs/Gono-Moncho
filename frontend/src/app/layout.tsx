@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { Providers } from "./providers";
 import { ArticleProvider } from "@/context/ArticleContext"; // <-- IMPORT
+import { ToastProvider } from "@/context/ToastContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <ArticleProvider> {/* <-- WRAP WITH ARTICLE PROVIDER */}
-            <Header />
-            {children}
-          </ArticleProvider>
+          <ToastProvider>
+            <ArticleProvider> {/* <-- WRAP WITH ARTICLE PROVIDER */}
+              <Header />
+              {children}
+            </ArticleProvider>
+          </ToastProvider>
         </Providers>
       </body>
     </html>
