@@ -65,6 +65,14 @@ export default function Header() {
               <span className="absolute inset-0 bg-primary-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
 
+            <Link 
+              href="/seed-demo" 
+              className="group relative font-semibold text-green-700 hover:text-green-600 transition-all duration-300 px-3 py-2"
+            >
+              <span className="relative z-10">🎬 Demo Seeder</span>
+              <span className="absolute inset-0 bg-green-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+            </Link>
+
             {/* Only render wallet button after client-side mount to prevent hydration mismatch */}
             {mounted ? (
               <ConnectButton />
