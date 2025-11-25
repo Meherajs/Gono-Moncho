@@ -90,7 +90,7 @@ export default function ReporterRegistration() {
 
   useEffect(() => {
     if (isSuccess) {
-      showToast("Transaction successful!", "success");
+      showToast("✅ Successfully registered as reporter!", "success");
       refetchProfile();
       setIpfsHash("");
       setCredentials({ name: "", organization: "", experience: "", portfolio: "" });

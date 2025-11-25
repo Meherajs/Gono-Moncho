@@ -29,28 +29,18 @@ export default function PublishForm() {
     if (isConfirmed && !hasAddedArticle.current) {
       hasAddedArticle.current = true;
       
-      let videoUrl;
-      if (videoFile) {
-        videoUrl = URL.createObjectURL(videoFile);
-      }
-
-      const payload = JSON.stringify({
-        headline,
-        content,
-        createdAt: new Date().toISOString(),
-      });
-      const contentHash = keccak256(stringToBytes(payload));
+      showToast("✅ Article published successfully! It will appear on the homepage.", "success");
       
-      addArticle({ headline, summary: content, body: content, videoUrl, contentHash });
-      refreshArticles();
-      
-      showToast("Article published successfully!", "success");
+      // Refresh articles from blockchain to get the newly published article
+      setTimeout(() => {
+        refreshArticles();
+      }, 2000); // Wait 2 seconds for blockchain to process
       
       setHeadline('');
       setContent('');
       setVideoFile(null);
     }
-  }, [isConfirmed, headline, content, videoFile, addArticle, refreshArticles, showToast]);
+  }, [isConfirmed, refreshArticles, showToast]);
 
   useEffect(() => {
     if (writeError) {
