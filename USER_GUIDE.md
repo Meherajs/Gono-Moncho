@@ -1410,58 +1410,57 @@ Gono Moncho uses 7 interconnected smart contracts:
 
 ---
 
-## 🎓 For Hackathon Judges/Mentors
+## 🔧 Technical Architecture
 
-### 🎯 Project Overview
+### System Overview
 
-**Gono Moncho** demonstrates:
+Gono Moncho is built as a full-stack decentralized application combining smart contracts, permanent storage, and a modern web interface. The architecture includes 7 interconnected smart contracts deployed on Polygon, with content stored permanently on Arweave and a Next.js frontend providing the user interface.
 
-1. **Full-Stack Blockchain Development**
-   - 7 interconnected smart contracts
-   - Solidity best practices
-   - OpenZeppelin standards
-   - Upgradeable architecture
+**Core Components:**
 
-2. **Modern Web3 Frontend**
-   - Next.js 14 (App Router)
-   - Wagmi v2 hooks
-   - TypeScript
-   - Tailwind CSS
-   - Real-time blockchain data
+**Smart Contracts (Solidity ^0.8.24)**
+- NEWS Token - ERC20 governance token enabling journalist privileges through staking
+- CRED Token - Soulbound reputation token (non-transferable) earned through platform participation
+- NewsStaking - Manages token staking, journalist verification, and reward distribution
+- Verification - Handles article submission, verification voting, and credibility scoring
+- NewsDAO - Governance system with proposal creation, voting, and execution
+- DelegationRegistry - Vote delegation with topic-based support
+- ArweaveStorage - Links blockchain records to permanent Arweave storage
 
-3. **Decentralized Architecture**
-   - No central server for content
-   - Arweave permanent storage
-   - Blockchain-based verification
-   - DAO governance
+**Frontend (Next.js 14)**
+- Built with TypeScript, Wagmi v2, and Viem for blockchain interaction
+- TanStack Query for efficient state management
+- Tailwind CSS for responsive design
+- Real-time data synchronization with smart contracts
 
-4. **Token Economics**
-   - Dual token system (NEWS/CRED)
-   - Staking mechanism
-   - Slashing for bad behavior
-   - Quadratic voting
-
-5. **AI Integration** (Planned)
-   - Chainlink oracles
-   - Off-chain computation
-   - On-chain verification
-   - Hybrid credibility scoring
+**Storage Layer**
+- Arweave for permanent, immutable content storage
+- On-chain references linking articles to Arweave transaction IDs
+- Censorship-resistant architecture with no central server dependencies
 
 ---
 
-### 🏆 Key Innovation Points
+### Innovation Highlights
 
-1. **SANUB Algorithm**: Novel credibility scoring combining AI + human input
-2. **Soulbound Reputation**: Non-transferable CRED tokens prevent market manipulation
-3. **Quadratic Voting**: Democratic governance preventing whale domination
-4. **Permanent Storage**: Arweave integration for censorship resistance
-5. **Role-Based Access**: Smart contract enforced journalist verification
+**SANUB Credibility Algorithm**
+The platform combines AI analysis with community verification to generate credibility scores. Each article receives votes from community verifiers, with their reputation (CRED) weighting the vote. The system is designed to be extended with AI oracle integration for automated preliminary analysis.
+
+**Soulbound Reputation System**
+CRED tokens are non-transferable, preventing reputation markets and ensuring authentic participation. Users earn CRED through accurate verification, quality journalism, and governance participation. This creates a meritocratic system where reputation must be earned, not bought.
+
+**Quadratic Voting Mechanism**
+Funding proposals use quadratic voting (cost = votes²) to prevent wealthy users from dominating decisions. This mathematical approach ensures more democratic outcomes and encourages coalition-building among smaller stakeholders.
+
+**Role-Based Access Control**
+Smart contracts enforce journalist verification through token staking. Only addresses with staked NEWS tokens can publish articles, creating an economic barrier against spam while remaining accessible to genuine journalists.
+
+**Permanent Storage Integration**
+Articles are uploaded to Arweave, generating transaction IDs that are stored on-chain. This dual-layer approach ensures content permanence while maintaining blockchain efficiency and cost-effectiveness.
 
 ---
 
-### 📊 Technical Highlights
+### Smart Contract Architecture
 
-**Smart Contract Architecture:**
 ```
 NEWS Token ←→ NewsStaking ←→ Verification
      ↓              ↓              ↓
@@ -1470,89 +1469,53 @@ NEWS Token ←→ NewsStaking ←→ Verification
 DelegationRegistry ←→ ArweaveStorage
 ```
 
-**Frontend Stack:**
-- Next.js 14 (React Server Components)
-- Wagmi + Viem (Ethereum interaction)
-- TanStack Query (State management)
-- Polygon Amoy (Test network)
+Each contract is built using OpenZeppelin standards for security and upgradeability. The architecture supports future enhancements while maintaining current functionality.
 
-**Key Features Implemented:**
-- ✅ Wallet connection (MetaMask)
-- ✅ Token staking/unstaking
-- ✅ Article publishing on-chain
-- ✅ Community verification voting
-- ✅ DAO governance proposals
-- ✅ Vote delegation
-- ✅ Real-time credibility scoring
-- ⏳ AI Oracle (ready for integration)
-- ⏳ Arweave upload (ready for API)
+**Key Interactions:**
+- Staking NEWS unlocks publishing rights in Verification contract
+- Verification votes use CRED token balances for weight calculation
+- DAO proposals can modify system parameters across contracts
+- Delegation allows vote splitting across governance topics
 
 ---
 
-### 🚀 Demo Flow for Judges
+### Feature Implementation Status
 
-**5-Minute Demo Script:**
+**Currently Active:**
+- MetaMask wallet integration with network switching
+- Token staking and unstaking with approval flow
+- On-chain article publishing with content hash storage
+- Community-driven verification voting system
+- DAO proposal creation and voting
+- Vote delegation with delegatee tracking
+- Real-time credibility score calculation
 
-1. **Homepage** (30 sec)
-   - Show article grid
-   - Filter by categories
-   - Explain credibility scores
-
-2. **Wallet Connection** (30 sec)
-   - Connect MetaMask
-   - Show network indicator
-   - Explain Polygon Amoy
-
-3. **Staking** (1 min)
-   - Navigate to Governance
-   - Approve + Stake NEWS tokens
-   - Become journalist
-
-4. **Publishing** (1 min)
-   - Go to Publish page
-   - Fill article form
-   - Submit to blockchain
-   - Show transaction confirmation
-
-5. **Verification** (1 min)
-   - Open article detail
-   - Cast verification vote
-   - Show updated credibility score
-
-6. **Governance** (1 min)
-   - Create proposal
-   - Vote on existing proposal
-   - Explain quadratic voting
-
-7. **Architecture** (30 sec)
-   - Show smart contracts on block explorer
-   - Explain decentralized storage
-   - Highlight no central point of failure
+**Integration Ready:**
+- AI Oracle contract interface (awaiting deployment)
+- Arweave upload API endpoints (backend in progress)
+- Token distribution system for testing
 
 ---
 
-### 💡 Discussion Points
+### Platform Demo Walkthrough
 
-**For Technical Questions:**
-- Solidity optimization techniques used
-- Why Polygon over other L2s
-- Arweave vs IPFS comparison
-- Security considerations
-- Scalability solutions
+**Getting Started (1-2 minutes)**
+Start at the homepage where articles are displayed in a grid layout. Categories can be filtered for specific topics like Politics, Technology, or Health. Each article shows its credibility score (0-100) based on community verification. Connect a MetaMask wallet to access full functionality.
 
-**For Business Questions:**
-- Target market (developing countries)
-- Monetization strategy
-- Competitor analysis
-- Growth roadmap
-- Real-world adoption plan
+**Becoming a Journalist (2-3 minutes)**
+Navigate to the Governance page to stake NEWS tokens. The process requires two transactions: first approving the staking contract to access tokens, then executing the stake. Once completed, the Publish page becomes accessible. The staking mechanism acts as collateral against misinformation.
 
-**For Impact Questions:**
-- Fighting misinformation
-- Censorship resistance
-- Empowering independent journalism
-- Community-driven content moderation
-- Democratic governance
+**Publishing Content (2-3 minutes)**
+On the Publish page, fill out the article form with title, content, category, and optional media. Submit triggers a blockchain transaction that records the article reference. The transaction confirmation includes the article ID and blockchain timestamp.
+
+**Verification Process (2-3 minutes)**
+Open any published article to access the verification section. Verifiers with CRED tokens can vote on article credibility. The vote is weighted by reputation and immediately updates the article's credibility score visible to all readers.
+
+**Governance Participation (3-4 minutes)**
+In the Governance page, view active proposals or create new ones. Proposal types include parameter changes, feature additions, or treasury management. Voting uses CRED tokens, with quadratic mechanics applied to funding proposals. Results execute automatically when passing requirements are met.
+
+**Technical Verification (1-2 minutes)**
+All transactions can be verified on Polygon Amoy block explorer using the provided contract addresses. Smart contract source code is available on GitHub for audit and review.
 
 ---
 
@@ -1592,30 +1555,26 @@ DelegationRegistry ←→ ArweaveStorage
 
 ---
 
-## 🎉 Conclusion
+## Getting Involved
 
-Congratulations! You now understand how to use Gono Moncho from beginning to end.
+Gono Moncho represents a new model for journalism - one that's transparent, community-driven, and censorship-resistant. The platform is live on Polygon Amoy testnet, demonstrating how blockchain technology can address real-world challenges in media and information distribution.
 
-**Remember:**
-- 📰 **Read** articles freely
-- ✍️ **Stake** to become a journalist
-- ✅ **Verify** to earn reputation
-- 🗳️ **Vote** to govern the platform
-- 🤝 **Delegate** if you're busy
-- 🔗 **Participate** in building better journalism
+**Ways to Participate:**
+- Browse and read articles to stay informed
+- Stake NEWS tokens to publish your own content
+- Verify articles to build reputation and earn CRED
+- Vote on governance proposals to shape platform evolution
+- Delegate voting power if you trust others' judgment
+- Contribute to the codebase (it's open source)
 
-**Join the Revolution:**
-Gono Moncho isn't just a platform—it's a movement toward transparent, community-driven, censorship-resistant journalism.
-
-**Your Voice Matters. Your Vote Counts. Your Truth Persists.**
+The platform operates without central control. Every article, vote, and governance decision is recorded permanently on the blockchain. This creates a transparent historical record that can't be altered or erased.
 
 ---
 
-*Built with ❤️ for Build4Democracy Hackathon*  
-*Powered by Polygon, Arweave, and the Community*
+*Built for Build4Democracy*  
+*Powered by Polygon, Arweave, and Community Governance*
 
-**Questions? Issues? Feedback?**  
-Open an issue on GitHub or contact the team.
+Questions or feedback? Open an issue on GitHub or reach out to the development team.
 
 ---
 
