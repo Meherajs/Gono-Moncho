@@ -15,41 +15,42 @@ export default function ArweaveUploadHelper({ onUploadComplete }: ArweaveUploadP
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      // For now, we'll simulate Arweave upload with a mock hash
-      // In production, you would integrate with Arweave's upload API
+      // Upload to Arweave via API
+      const formData = new FormData();
+      formData.append('file', file);
       
-      // Read file content
-      const content = await file.text();
-      
-      // Generate a mock IPFS/Arweave hash
-      const mockHash = `Qm${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-      
-      // In production, you would do something like:
-      // const formData = new FormData();
-      // formData.append('file', file);
-      // const response = await fetch('/api/arweave/upload', {
-      //   method: 'POST',
-      //   body: formData
-      // });
-      // const { hash, metadata } = await response.json();
+      const response = await fetch('/api/arweave/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const result = await response.json();
       
       const metadata = {
-        filename: file.name,
-        size: file.size,
-        type: file.type,
-        uploadedAt: new Date().toISOString(),
-        content: content.substring(0, 500) // Preview
+        filename: result.filename,
+        size: result.size,
+        type: result.contentType,
+        uploadedAt: result.uploadedAt,
+        arweaveUrl: result.arweaveUrl,
+        ipfsUrl: result.ipfsUrl,
+        preview: result.preview
       };
 
-      setUploadedHash(mockHash);
-      showToast("File uploaded successfully!", "success");
+      // Use Arweave ID as the hash
+      setUploadedHash(result.arweaveId);
+      showToast("File uploaded to Arweave successfully!", "success");
       
       if (onUploadComplete) {
-        onUploadComplete(mockHash, metadata);
+        onUploadComplete(result.arweaveId, metadata);
       }
     } catch (error) {
       console.error("Upload error:", error);
-      showToast("Upload failed. Please try again.", "error");
+      showToast(error instanceof Error ? error.message : "Upload failed. Please try again.", "error");
     } finally {
       setUploading(false);
     }
@@ -61,25 +62,40 @@ export default function ArweaveUploadHelper({ onUploadComplete }: ArweaveUploadP
       // Convert JSON to string
       const jsonString = JSON.stringify(jsonData, null, 2);
       
-      // Generate mock hash
-      const mockHash = `Qm${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+      // Upload to Arweave via API
+      const formData = new FormData();
+      formData.append('json', jsonString);
+      
+      const response = await fetch('/api/arweave/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const result = await response.json();
       
       const metadata = {
         type: 'application/json',
-        size: jsonString.length,
-        uploadedAt: new Date().toISOString(),
+        size: result.size,
+        uploadedAt: result.uploadedAt,
+        arweaveUrl: result.arweaveUrl,
+        ipfsUrl: result.ipfsUrl,
         content: jsonData
       };
 
-      setUploadedHash(mockHash);
-      showToast("Metadata uploaded successfully!", "success");
+      setUploadedHash(result.arweaveId);
+      showToast("Metadata uploaded to Arweave successfully!", "success");
       
       if (onUploadComplete) {
-        onUploadComplete(mockHash, metadata);
+        onUploadComplete(result.arweaveId, metadata);
       }
     } catch (error) {
       console.error("Upload error:", error);
-      showToast("Upload failed. Please try again.", "error");
+      showToast(error instanceof Error ? error.message : "Upload failed. Please try again.", "error");
     } finally {
       setUploading(false);
     }
@@ -167,10 +183,10 @@ export default function ArweaveUploadHelper({ onUploadComplete }: ArweaveUploadP
         </div>
 
         {/* Integration Note */}
-        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-          <p className="text-sm text-yellow-800">
-            <strong>🔧 Development Mode:</strong> Currently generating mock hashes. 
-            In production, this will integrate with Arweave/IPFS upload services.
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <p className="text-sm text-blue-800">
+            <strong>✅ Arweave Integration Active:</strong> Files are uploaded via API endpoint. 
+            Currently using mock Arweave IDs for testing. In production, will use Bundlr/Irys for real uploads.
           </p>
         </div>
 

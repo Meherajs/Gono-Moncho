@@ -45,6 +45,7 @@ export default function ReporterRegistration() {
     experience: "",
     portfolio: ""
   });
+  const [showAutoVerify, setShowAutoVerify] = useState(false);
   const { showToast } = useToast();
 
   // Check if testing mode is enabled

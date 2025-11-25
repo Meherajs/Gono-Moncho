@@ -11,6 +11,7 @@ export default function PublishForm() {
   const [headline, setHeadline] = useState('');
   const [content, setContent] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [isUploadingToArweave, setIsUploadingToArweave] = useState(false);
   const hasAddedArticle = useRef(false);
   const { showToast } = useToast();
 
@@ -65,21 +66,49 @@ export default function PublishForm() {
     }
     hasAddedArticle.current = false;
     
-    const payload = JSON.stringify({
-      headline,
-      content,
-      createdAt: new Date().toISOString(),
-    });
-    const contentHash = keccak256(stringToBytes(payload));
-    
-    showToast("Publishing article to blockchain...", "info");
-    
-    writeContract({
-      address: CONTRACT_ADDRESSES.Verification,
-      abi: VerificationABI,
-      functionName: 'publishNews',
-      args: [contentHash],
-    });
+    try {
+      setIsUploadingToArweave(true);
+      showToast("Uploading article content to Arweave...", "info");
+
+      // Prepare article data
+      const articleData = {
+        headline,
+        content,
+        author: "Anonymous", // Will be replaced with wallet address
+        createdAt: new Date().toISOString(),
+        platform: "Gono Moncho"
+      };
+
+      // Upload to Arweave
+      const formData = new FormData();
+      formData.append('json', JSON.stringify(articleData));
+      
+      const uploadResponse = await fetch('/api/arweave/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload to Arweave');
+      }
+
+      const uploadResult = await uploadResponse.json();
+      const arweaveHash = uploadResult.arweaveId;
+      
+      showToast("Content uploaded! Publishing to blockchain...", "info");
+      setIsUploadingToArweave(false);
+
+      // Publish to blockchain using Arweave hash
+      writeContract({
+        address: CONTRACT_ADDRESSES.Verification,
+        abi: VerificationABI,
+        functionName: 'publishNews',
+        args: [arweaveHash],
+      });
+    } catch (error) {
+      setIsUploadingToArweave(false);
+      showToast(error instanceof Error ? error.message : "Upload failed", "error");
+    }
   };
 
   return (
@@ -148,13 +177,18 @@ export default function PublishForm() {
         <div className="flex gap-4">
           <button
             type="submit"
-            disabled={isConfirming || !headline || !content}
+            disabled={isConfirming || isUploadingToArweave || !headline || !content}
             className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl transition-all"
           >
-            {isConfirming ? (
+            {isUploadingToArweave ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Publishing...
+                Uploading to Arweave...
+              </span>
+            ) : isConfirming ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Publishing to Blockchain...
               </span>
             ) : (
               "📰 Publish Article"
@@ -176,12 +210,11 @@ export default function PublishForm() {
 
       {/* Info Box */}
       <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h3 className="font-semibold text-blue-800 mb-2">📋 Publishing Guidelines</h3>
+        <h3 className="font-semibold text-blue-800 mb-2">📋 Publishing Process</h3>
         <ul className="text-sm text-blue-700 space-y-1">
-          <li>• Be accurate and factual in your reporting</li>
-          <li>• Cite sources when possible</li>
-          <li>• Avoid misleading or sensational headlines</li>
-          <li>• Your article will be verified by the community</li>
+          <li>• Step 1: Your article is uploaded to Arweave for permanent storage</li>
+          <li>• Step 2: The Arweave hash is published to the blockchain</li>
+          <li>• Step 3: Community can verify and vote on your article</li>
           <li>• Quality reporting earns CRED reputation tokens</li>
         </ul>
       </div>

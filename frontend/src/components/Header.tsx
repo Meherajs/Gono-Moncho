@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ConnectButton from './ConnectButton';
@@ -13,6 +13,12 @@ export default function Header() {
   const { isJournalist, isLoading } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Only render ConnectButton after component mounts on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -58,18 +64,13 @@ export default function Header() {
               <span className="relative z-10">🏛️ Governance</span>
               <span className="absolute inset-0 bg-primary-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
-            
-            {/* Show reporter portal message if connected but not verified */}
-            {!isJournalist && !isLoading && (
-              <Link 
-                href="/reporter" 
-                className="text-xs font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-3 py-2 rounded-lg transition-all duration-200 border border-primary-200"
-              >
-                📝 Register as Reporter →
-              </Link>
-            )}
 
-            <ConnectButton />
+            {/* Only render wallet button after client-side mount to prevent hydration mismatch */}
+            {mounted ? (
+              <ConnectButton />
+            ) : (
+              <div className="w-40 h-10 bg-gray-100 rounded-lg animate-pulse" />
+            )}
           </div>
         </div>
       </div>

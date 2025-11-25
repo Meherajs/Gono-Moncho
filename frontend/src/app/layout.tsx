@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import DemoHelper from "@/components/DemoHelper";
 import { Providers } from "./providers";
 import { ArticleProvider } from "@/context/ArticleContext"; // <-- IMPORT
 import { ToastProvider } from "@/context/ToastContext";
@@ -26,6 +27,7 @@ export default function RootLayout({
             <ArticleProvider> {/* <-- WRAP WITH ARTICLE PROVIDER */}
               <Header />
               {children}
+              <DemoHelper />
             </ArticleProvider>
           </ToastProvider>
         </Providers>
