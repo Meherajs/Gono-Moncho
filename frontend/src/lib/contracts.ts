@@ -8,7 +8,9 @@ export const CONTRACT_ADDRESSES = {
   NewsDAO: '0xccf0212b8c443ee148a36106f109b7b3c5250f51',
   Verification: '0xe5672b7bf38e11d81feb07d77a35cf5499a0adeb',
   ArweaveStorage: '0xc7311a7c71647edd9556938ad6f22afe4dc01a66',
-  DelegationRegistry: '0xea67b90c7d566ae98c4906fa8962844fb424e4f0'
+  DelegationRegistry: '0xea67b90c7d566ae98c4906fa8962844fb424e4f0',
+  // Note: AIOracle address not provided - AI analysis will be accessed through Verification contract
+  AIOracle: '0x0000000000000000000000000000000000000000' // Placeholder - update when deployed
 } as const;
 
 // Simplified ABI for NewsDAO (main contract for frontend interaction)
@@ -69,6 +71,13 @@ export const VerificationABI = [
   },
   {
     "type": "function",
+    "name": "requestAIVerification",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "contentHash", "type": "string" }],
+    "outputs": []
+  },
+  {
+    "type": "function",
     "name": "finalizeVerification",
     "stateMutability": "nonpayable",
     "inputs": [{ "name": "contentHash", "type": "string" }],
@@ -82,8 +91,26 @@ export const VerificationABI = [
     "outputs": [
       { "name": "reporter", "type": "address" },
       { "name": "arweaveHash", "type": "string" },
+      { "name": "analyzerScores", "type": "uint256[]" },
+      { "name": "verifierScores", "type": "uint256[]" },
       { "name": "status", "type": "uint8" },
       { "name": "credibilityScore", "type": "uint256" }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "NewsPublished",
+    "inputs": [
+      { "name": "arweaveHash", "type": "string", "indexed": true },
+      { "name": "reporter", "type": "address", "indexed": true }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "NewsVerified",
+    "inputs": [
+      { "name": "arweaveHash", "type": "string", "indexed": true },
+      { "name": "status", "type": "uint8", "indexed": false }
     ]
   }
 ] as const;
@@ -162,10 +189,108 @@ export const NewsStakingABI = [
       { "name": "", "type": "uint256" },
       { "name": "", "type": "uint256" }
     ]
+  },
+  {
+    "type": "function",
+    "name": "getAllStakers",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address[]" }]
+  },
+  {
+    "type": "function",
+    "name": "stakes",
+    "stateMutability": "view",
+    "inputs": [{ "name": "", "type": "address" }],
+    "outputs": [
+      { "name": "amount", "type": "uint256" },
+      { "name": "stakedAt", "type": "uint256" }
+    ]
   }
 ] as const;
 
-// Export a helper function to check if contracts are deployed\nexport function areContractsDeployed(): boolean {
+// ArweaveStorage ABI
+export const ArweaveStorageABI = [
+  {
+    "type": "function",
+    "name": "storeReference",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "contentHash", "type": "string" },
+      { "name": "owner", "type": "address" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "contentOwner",
+    "stateMutability": "view",
+    "inputs": [{ "name": "", "type": "string" }],
+    "outputs": [{ "name": "", "type": "address" }]
+  },
+  {
+    "type": "event",
+    "name": "ContentStored",
+    "inputs": [
+      { "name": "contentHash", "type": "string", "indexed": true },
+      { "name": "owner", "type": "address", "indexed": true }
+    ]
+  }
+] as const;
+
+// AIOracle ABI
+export const AIOracleABI = [
+  {
+    "type": "function",
+    "name": "requestAnalysis",
+    "stateMutability": "nonpayable",
+    "inputs": [{ "name": "contentHash", "type": "string" }],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getAnalysis",
+    "stateMutability": "view",
+    "inputs": [{ "name": "contentHash", "type": "string" }],
+    "outputs": [{ "name": "credibilityScore", "type": "uint256" }]
+  }
+] as const;
+
+// DelegationRegistry ABI
+export const DelegationRegistryABI = [
+  {
+    "type": "function",
+    "name": "setDelegate",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "topic", "type": "uint256" },
+      { "name": "delegate", "type": "address" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getDelegate",
+    "stateMutability": "view",
+    "inputs": [
+      { "name": "delegator", "type": "address" },
+      { "name": "topic", "type": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "address" }]
+  },
+  {
+    "type": "event",
+    "name": "DelegateSet",
+    "inputs": [
+      { "name": "delegator", "type": "address", "indexed": true },
+      { "name": "topic", "type": "uint256", "indexed": true },
+      { "name": "delegate", "type": "address", "indexed": true }
+    ]
+  }
+] as const;
+
+// Export a helper function to check if contracts are deployed\n
+export function areContractsDeployed(): boolean {
   return true; // Contracts are deployed on Polygon Amoy
 }
 

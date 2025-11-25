@@ -1,0 +1,295 @@
+# ============================================
+# Gono Moncho - Complete .gitignore
+# ============================================
+
+# ============================================
+# ENVIRONMENT & SECRETS
+# ============================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+*.key
+*.pem
+secrets.json
+.secret
+
+# ============================================
+# FRONTEND (Next.js / React)
+# ============================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Production
+/build
+
+# Next.js cache
+.next/cache/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+coverage/
+.nyc_output
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# IDE - IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# IDE - WebStorm
+.idea
+
+# ============================================
+# BACKEND (Foundry / Solidity)
+# ============================================
+
+# Foundry cache and build
+cache/
+out/
+broadcast/
+
+# Foundry artifacts
+artifacts/
+
+# Hardhat (if used alongside)
+artifacts-hardhat/
+cache-hardhat/
+typechain/
+typechain-types/
+
+# ABIs generated
+abi/
+**/abi/*.json
+
+# Forge snapshots
+.gas-snapshot
+
+# Coverage reports
+coverage.json
+coverage/
+lcov.info
+
+# ============================================
+# OS SPECIFIC
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# LOGS
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ============================================
+# TEMPORARY FILES
+# ============================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.*.swp
+
+# ============================================
+# BLOCKCHAIN & WALLET
+# ============================================
+
+# Private keys and mnemonics
+mnemonic.txt
+privatekey.txt
+keystore/
+wallets/
+
+# Deployment addresses (if sensitive)
+deployments-local/
+
+# ============================================
+# TESTING & DEBUGGING
+# ============================================
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Debug
+debug/
+*.debug
+
+# ============================================
+# DEPENDENCIES & PACKAGES
+# ============================================
+
+# npm
+package-lock.json.bak
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# pnpm
+.pnpm-store/
+
+# ============================================
+# BUILD ARTIFACTS
+# ============================================
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+*.js.map
+
+# Static files (generated)
+/public/build
+/static
+
+# ============================================
+# MISCELLANEOUS
+# ============================================
+
+# Lock files (uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Backup files
+*.bak
+*.backup
+*-backup
+*.old
+
+# Compressed files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# PROJECT SPECIFIC
+# ============================================
+
+# Generated contract ABIs (if not needed in repo)
+# frontend/src/lib/abi/*.json
+
+# Large test data
+test-data/
+mock-data/
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+
+# ============================================
+# TURBOPACK (Next.js 13+)
+# ============================================
+.turbopack/
+
+# ============================================
+# OPTIONAL: Development files
+# ============================================
+
+# Personal notes
+NOTES.md
+TODO.md
+notes/
+todos/
+
+# Local configuration overrides
+*.local.config.js
+*.local.config.ts
+
+# ============================================
+# Keep these files (force include)
+# ============================================
+!.vscode/settings.json
+!.gitignore
+!.env.example
+!README.md

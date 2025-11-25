@@ -1,55 +1,166 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ConnectButton from './ConnectButton';
 import { useArticles } from '@/context/ArticleContext';
-import { useAccount } from 'wagmi'; // The only hook we now need for this logic
+import { useUserRole } from '@/Hooks/useUserRole';
 
 export default function Header() {
+  const router = useRouter();
   const { categories, selectedCategory, setSelectedCategory } = useArticles();
-  const { isConnected } = useAccount(); // Get the connection status directly
+  const { isJournalist, isLoading } = useUserRole();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    // Use setTimeout to ensure state update happens before navigation
+    setTimeout(() => {
+      router.push('/');
+    }, 0);
+  };
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setSelectedCategory('All');
+    setTimeout(() => {
+      router.push('/');
+    }, 0);
+  };
 
   return (
-    <header className="bg-white text-black border-b shadow-sm">
-      {/* Top bar */}
-      <div className="container mx-auto px-4 py-2 flex justify-between items-center text-sm">
-        <span className="text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-        <div className="flex items-center gap-4">
-          
-          {/* The Publish button is now ONLY dependent on being connected */}
-          {isConnected && (
-            <Link href="/publish" className="font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md transition-colors duration-200">
-              Publish Article
+    <header className="bg-gradient-to-b from-white to-gray-50 text-black shadow-md">
+      {/* Top bar with elegant styling - This stays sticky */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center text-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-gray-600 font-medium">
+              📅 {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            
+            {/* Navigation Links with modern styling */}
+            <Link 
+              href="/governance" 
+              className="group relative font-semibold text-gray-700 hover:text-primary-600 transition-all duration-300 px-3 py-2"
+            >
+              <span className="relative z-10">🏛️ Governance</span>
+              <span className="absolute inset-0 bg-primary-50 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
-          )}
+            
+            {/* The Publish button - Only show if user has staked NEWS tokens */}
+            {isJournalist && !isLoading && (
+              <Link 
+                href="/publish" 
+                className="relative font-bold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 group overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  ✍️ Publish Article
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              </Link>
+            )}
+            
+            {/* Show stake message if connected but not journalist */}
+            {!isJournalist && !isLoading && (
+              <Link 
+                href="/governance" 
+                className="text-xs font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-3 py-2 rounded-lg transition-all duration-200 border border-primary-200"
+              >
+                🔒 Stake NEWS to publish →
+              </Link>
+            )}
 
-          <ConnectButton />
+            <ConnectButton />
+          </div>
         </div>
       </div>
       
-      {/* Main header with logo */}
-      <div className="py-6 text-center border-t">
-        <Link href="/" className="text-5xl font-serif font-bold text-gray-800">Gono Moncho</Link>
-        <p className="text-sm text-gray-500 mt-2">A Decentralized Ecosystem for Verifiable Journalism</p>
+      {/* Main header with logo - Enhanced with gradient and animations */}
+      <div className="py-8 text-center bg-gradient-to-r from-gray-50 via-white to-gray-50">
+        <Link href="/" className="group inline-block" onClick={handleLogoClick}>
+          <h1 className="text-6xl md:text-7xl font-serif font-black bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent group-hover:from-primary-700 group-hover:via-primary-600 group-hover:to-primary-700 transition-all duration-500 tracking-tight">
+            Gono Moncho
+          </h1>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <span className="h-px w-12 bg-gradient-to-r from-transparent to-primary-400"></span>
+            <p className="text-sm font-medium text-gray-600 uppercase tracking-widest">
+              Decentralized • Verifiable • Trustworthy
+            </p>
+            <span className="h-px w-12 bg-gradient-to-l from-transparent to-primary-400"></span>
+          </div>
+        </Link>
       </div>
 
-      {/* Category Navigation Bar */}
-      <nav className="border-t border-b bg-gray-50 sticky top-0 z-10">
-        <div className="container mx-auto px-4 flex justify-center items-center gap-x-6 sm:gap-x-8 text-sm font-semibold">
-          {categories.map((category) => (
-            <button 
-              key={category} 
-              onClick={() => setSelectedCategory(category)}
-              className={`py-3 hover:text-black border-b-2 transition-colors duration-200 ${
-                selectedCategory === category
-                  ? 'border-black text-black'
-                  : 'border-transparent text-gray-600'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+      {/* Category Navigation Bar with Search - Modern tabs design */}
+      <nav className="border-t border-gray-200 bg-white shadow-sm sticky top-[60px] z-40">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center gap-4 py-3">
+            {/* Categories */}
+            <ul className="flex gap-1 overflow-x-auto scrollbar-hide">
+              {categories.map((cat) => (
+                <li key={cat}>
+                  <button
+                    onClick={() => handleCategoryClick(cat)}
+                    className={`px-5 py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all duration-300 ${
+                      selectedCategory === cat
+                        ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg scale-105'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-primary-600'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {/* Search Bar */}
+            <div className="flex items-center gap-2">
+              {showSearch && (
+                <div className="relative animate-slide-down">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..."
+                    className="w-64 px-4 py-2 pl-10 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                    autoFocus
+                  />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    🔍
+                  </span>
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              )}
+              <button
+                onClick={() => setShowSearch(!showSearch)}
+                className="p-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200"
+                title="Search"
+              >
+                {showSearch ? (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </nav>
     </header>
