@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { VerificationABI, CONTRACT_ADDRESSES } from '@/lib/contracts';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { VerificationABI, CONTRACT_ADDRESSES, ReporterRegistryABI } from '@/lib/contracts';
 import { useArticles } from '@/context/ArticleContext';
 import { useToast } from '@/context/ToastContext';
 import { useUserRole } from '@/Hooks/useUserRole';
@@ -18,18 +18,32 @@ export default function PublishPage() {
   const hasAddedArticle = useRef(false);
   const { showToast } = useToast();
   const { isJournalist, isLoading } = useUserRole();
+  const { address } = useAccount();
+
+  // Check if user can publish via ReporterRegistry
+  const { data: canPublishData } = useReadContract({
+    address: CONTRACT_ADDRESSES.ReporterRegistry,
+    abi: ReporterRegistryABI,
+    functionName: 'canPublish',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    }
+  });
+
+  const canPublish = Boolean(canPublishData);
 
   const { addArticle, refreshArticles } = useArticles();
   const { data: hash, writeContract, error: writeError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
 
-  // Redirect non-journalists to governance page
+  // Redirect non-journalists to reporter registration page
   useEffect(() => {
-    if (!isLoading && !isJournalist) {
-      showToast("You must stake NEWS tokens before publishing articles", "warning");
-      router.push('/governance');
+    if (!isLoading && !isJournalist && !canPublish) {
+      showToast("You must register and be verified as a reporter to publish articles", "warning");
+      router.push('/reporter');
     }
-  }, [isJournalist, isLoading, router, showToast]);
+  }, [isJournalist, canPublish, isLoading, router, showToast]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -115,44 +129,44 @@ export default function PublishPage() {
     );
   }
 
-  if (!isJournalist) {
+  if (!isJournalist && !canPublish) {
     return (
       <div className="bg-gradient-to-br from-gray-50 to-white min-h-screen flex items-center justify-center animate-fade-in">
         <main className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-2xl">
-          <div className="bg-white p-12 rounded-2xl shadow-2xl text-center border-2 border-red-200">
-            <div className="mb-6 inline-block p-6 bg-red-100 rounded-full">
-              <span className="text-6xl">🚫</span>
+          <div className="bg-white p-12 rounded-2xl shadow-2xl text-center border-2 border-yellow-200">
+            <div className="mb-6 inline-block p-6 bg-yellow-100 rounded-full">
+              <span className="text-6xl">📝</span>
             </div>
-            <h1 className="text-4xl font-black text-gray-900 mb-4">Access Denied</h1>
+            <h1 className="text-4xl font-black text-gray-900 mb-4">Reporter Verification Required</h1>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              You must stake <strong className="text-primary-600">NEWS tokens</strong> before you can publish articles.
+              You must <strong className="text-primary-600">register and be verified as a reporter</strong> before you can publish articles.
             </p>
             <div className="space-y-4 text-left bg-gray-50 p-6 rounded-xl mb-8">
               <h3 className="font-bold text-gray-900 mb-3">📋 How to get started:</h3>
               <ol className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary-600">1.</span>
-                  <span>Go to the Governance page</span>
+                  <span>Go to the Reporter Portal</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary-600">2.</span>
-                  <span>Get NEWS tokens from your team</span>
+                  <span>Register with your credentials</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary-600">3.</span>
-                  <span>Stake tokens to become a journalist</span>
+                  <span>Wait for admin/DAO verification</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary-600">4.</span>
-                  <span>Return here to publish your article</span>
+                  <span>Start publishing your articles!</span>
                 </li>
               </ol>
             </div>
             <Link 
-              href="/governance" 
+              href="/reporter" 
               className="inline-block px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-bold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
-              🏛️ Go to Governance & Stake
+              🎤 Go to Reporter Portal
             </Link>
           </div>
         </main>

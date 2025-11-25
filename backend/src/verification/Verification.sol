@@ -90,7 +90,7 @@ contract Verification {
         NewsItem storage item = newsItems[contentHash];
         require(item.reporter != address(0), "News item does not exist");
         require(score <= 100, "Score must be between 0 and 100");
-        
+
         item.verifierScores.push(score);
     }
 

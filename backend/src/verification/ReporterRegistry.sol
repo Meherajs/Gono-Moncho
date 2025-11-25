@@ -43,8 +43,8 @@ contract ReporterRegistry is Ownable {
 
     // Minimum stake required for different roles (in wei)
     uint256 public constant REPORTER_STAKE_REQUIRED = 100 * 1e18; // 100 NEWS tokens
-    uint256 public constant ANALYZER_STAKE_REQUIRED = 50 * 1e18;  // 50 NEWS tokens
-    uint256 public constant VERIFIER_STAKE_REQUIRED = 25 * 1e18;  // 25 NEWS tokens
+    uint256 public constant ANALYZER_STAKE_REQUIRED = 50 * 1e18; // 50 NEWS tokens
+    uint256 public constant VERIFIER_STAKE_REQUIRED = 25 * 1e18; // 25 NEWS tokens
 
     // Testing mode - allows free registration
     bool public testingMode;
@@ -87,7 +87,10 @@ contract ReporterRegistry is Ownable {
         _;
     }
 
-    constructor(address _newsToken, address initialOwner) Ownable(initialOwner) {
+    constructor(
+        address _newsToken,
+        address initialOwner
+    ) Ownable(initialOwner) {
         newsToken = NEWS(_newsToken);
         testingMode = true; // Start in testing mode
         authorizedVerifiers[initialOwner] = true;
@@ -151,7 +154,10 @@ contract ReporterRegistry is Ownable {
      * @param _reporter Address of the reporter to verify
      * @param _approve Whether to approve or reject
      */
-    function verifyReporter(address _reporter, bool _approve) external onlyVerifier {
+    function verifyReporter(
+        address _reporter,
+        bool _approve
+    ) external onlyVerifier {
         ReporterProfile storage profile = reporters[_reporter];
         require(
             profile.status == ReporterStatus.PENDING,
@@ -173,7 +179,7 @@ contract ReporterRegistry is Ownable {
             profile.verifiedBy = msg.sender;
         } else {
             profile.status = ReporterStatus.REJECTED;
-            
+
             // Refund stake if rejected
             if (profile.stakedAmount > 0) {
                 uint256 refundAmount = profile.stakedAmount;
@@ -194,14 +200,8 @@ contract ReporterRegistry is Ownable {
      */
     function withdrawStake(uint256 _amount) external {
         ReporterProfile storage profile = reporters[msg.sender];
-        require(
-            profile.status == ReporterStatus.VERIFIED,
-            "Not verified"
-        );
-        require(
-            profile.stakedAmount >= _amount,
-            "Insufficient staked amount"
-        );
+        require(profile.status == ReporterStatus.VERIFIED, "Not verified");
+        require(profile.stakedAmount >= _amount, "Insufficient staked amount");
 
         uint256 requiredStake = getRequiredStake(profile.role);
         uint256 remainingStake = profile.stakedAmount - _amount;
@@ -235,7 +235,7 @@ contract ReporterRegistry is Ownable {
      */
     function canPublish(address _user) external view returns (bool) {
         ReporterProfile memory profile = reporters[_user];
-        
+
         // Must be verified reporter
         if (profile.status != ReporterStatus.VERIFIED) {
             return false;
@@ -257,12 +257,15 @@ contract ReporterRegistry is Ownable {
      */
     function canVerify(address _user) external view returns (bool) {
         ReporterProfile memory profile = reporters[_user];
-        
+
         if (profile.status != ReporterStatus.VERIFIED) {
             return false;
         }
 
-        if (profile.role != UserRole.VERIFIER && profile.role != UserRole.ANALYZER) {
+        if (
+            profile.role != UserRole.VERIFIER &&
+            profile.role != UserRole.ANALYZER
+        ) {
             return false;
         }
 
