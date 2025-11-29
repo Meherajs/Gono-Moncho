@@ -5,11 +5,13 @@ import Link from "next/link";
 import AnalysisSection from "@/components/AnalysisSection";
 import VerificationSection from "@/components/VerificationSection";
 import AIAnalysisSection from "@/components/AIAnalysisSection";
+import { use } from "react";
 // We no longer import useUserRole
 
-export default function ArticleDetailPage({ params }: { params: { id: string } }) {
+export default function ArticleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { articles, isLoading } = useArticles();
-  const article = articles.find(a => a.id === parseInt(params.id, 10));
+  const { id } = use(params);
+  const article = articles.find(a => a.id === parseInt(id, 10));
 
   if (!article) {
     return (

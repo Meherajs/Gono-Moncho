@@ -48,11 +48,15 @@ export default function ReporterRegistration() {
   const [showAutoVerify, setShowAutoVerify] = useState(false);
   const { showToast } = useToast();
 
+  // Check if ReporterRegistry is deployed
+  const isReporterRegistryDeployed = CONTRACT_ADDRESSES.ReporterRegistry !== '0x0000000000000000000000000000000000000000';
+
   // Check if testing mode is enabled
   const { data: testingMode } = useReadContract({
     address: CONTRACT_ADDRESSES.ReporterRegistry,
     abi: ReporterRegistryABI,
     functionName: 'testingMode',
+    query: { enabled: isReporterRegistryDeployed }
   });
 
   // Get reporter profile
@@ -62,7 +66,7 @@ export default function ReporterRegistration() {
     functionName: 'reporters',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!address,
+      enabled: !!address && isReporterRegistryDeployed,
     }
   });
 
@@ -90,7 +94,7 @@ export default function ReporterRegistration() {
 
   useEffect(() => {
     if (isSuccess) {
-      showToast("Transaction successful!", "success");
+      showToast("✅ Successfully registered as reporter!", "success");
       refetchProfile();
       setIpfsHash("");
       setCredentials({ name: "", organization: "", experience: "", portfolio: "" });
@@ -254,7 +258,24 @@ export default function ReporterRegistration() {
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">📝 Register as Reporter</h2>
       
-      {isTestingMode && (
+      {!isReporterRegistryDeployed && (
+        <div className="bg-red-50 p-4 rounded-lg border-2 border-red-500 mb-4">
+          <p className="text-red-800 font-bold mb-2">⚠️ ReporterRegistry Contract Not Deployed!</p>
+          <p className="text-sm text-red-700 mb-2">
+            The ReporterRegistry contract is not deployed yet. You need to deploy it first to register as a reporter.
+          </p>
+          <div className="bg-white p-3 rounded mt-2 text-xs">
+            <p className="font-semibold mb-1">Quick Deploy Steps:</p>
+            <ol className="list-decimal list-inside space-y-1 text-gray-700">
+              <li>Add your MetaMask private key to <code className="bg-gray-100 px-1">backend/.env</code></li>
+              <li>Run: <code className="bg-gray-100 px-1">cd backend && forge script script/DeployReporterRegistry.s.sol --rpc-url https://rpc-amoy.polygon.technology --broadcast</code></li>
+              <li>Update the deployed address in <code className="bg-gray-100 px-1">frontend/src/lib/contracts.ts</code></li>
+            </ol>
+          </div>
+        </div>
+      )}
+      
+      {isTestingMode && isReporterRegistryDeployed && (
         <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-4">
           <p className="text-green-800 font-semibold">🎉 Testing Mode Enabled!</p>
           <p className="text-sm text-green-700">Registration is FREE - no staking required during testing phase.</p>
@@ -390,10 +411,15 @@ export default function ReporterRegistration() {
       {/* Register Button */}
       <button
         onClick={handleRegister}
-        disabled={isWriting || isConfirming || (!ipfsHash && !credentials.name)}
+        disabled={!isReporterRegistryDeployed || isWriting || isConfirming || (!ipfsHash && !credentials.name)}
         className="w-full px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
       >
-        {isConfirming ? "Registering..." : "Register as " + ROLE_NAMES[selectedRole]}
+        {!isReporterRegistryDeployed 
+          ? "⚠️ Contract Not Deployed - Cannot Register" 
+          : isConfirming 
+            ? "Registering..." 
+            : "Register as " + ROLE_NAMES[selectedRole]
+        }
       </button>
 
       {/* Info Section */}

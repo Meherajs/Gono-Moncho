@@ -16,7 +16,7 @@ contract DeployReporterRegistryScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // Use existing NEWS token address from Polygon Amoy
-        address newsTokenAddress = 0xd3091433da9a925c38682b28ffbae975ed06617a;
+        address newsTokenAddress = 0xD3091433DA9a925C38682B28ffBAE975eD06617A;
 
         console.log("Deploying ReporterRegistry...");
         console.log("NEWS Token:", newsTokenAddress);
