@@ -9,7 +9,7 @@ export const CONTRACT_ADDRESSES = {
   Verification: '0xe5672b7bf38e11d81feb07d77a35cf5499a0adeb',
   ArweaveStorage: '0xc7311a7c71647edd9556938ad6f22afe4dc01a66',
   DelegationRegistry: '0xea67b90c7d566ae98c4906fa8962844fb424e4f0',
-  ReporterRegistry: '0x0000000000000000000000000000000000000000', // TODO: Update after deployment
+  ReporterRegistry: '0x41D98b532A5aEb444E0BF02b0BE171720c03A149',
   // Note: AIOracle address not provided - AI analysis will be accessed through Verification contract
   AIOracle: '0x0000000000000000000000000000000000000000' // Placeholder - update when deployed
 } as const;
